@@ -1,0 +1,256 @@
+apiVersion: icp4a.ibm.com/v1
+kind: WfPSRuntime
+metadata:
+  name: wfpsruntime-sample
+  namespace: cp4ba-starter
+spec:
+  license:
+    accept: true
+  node:
+    customize:
+      jvmOptions: |-
+        -Dtest1=test1
+        -Dtest2=test2
+      libertyXML: |-
+        <server>
+          <!-- liberty custom propeties here -->
+          <featureManager>
+            <feature>mpHealth-1.0</feature>
+          </featureManager>
+        </server>
+      libertyXMLSecret: custom-xml-secret-name
+      lombardiXML: |-
+        <properties>
+          <!--Properties file for customer cluster scoped properties. -->
+        </properties>
+      lombardiXMLSecret: custom-lombardi-xml-secret-name
+    resources:
+      limits:
+        cpu: 1
+        memory: 1024Mi
+      requests:
+        cpu: 1
+        memory: 512Mi
+    nodeAffinity:
+      customNodeSelectorMatchExpression:
+        - values:
+            - antarctica-east1
+            - antarctica-west1
+          key: topology.kubernetes.io/zone
+          operator: In
+        - values:
+            - region1
+            - region2
+          key: topology.kubernetes.io/region
+          operator: In
+        - values:
+            - amd64
+            - s390x
+            - ppc64le
+          key: kubernetes.io/arch
+          operator: In
+    securityContext:
+      fsGroup: 0
+      runAsUser: 1000740000
+    customLabels:
+      myKey1: myValue1
+      myKey2: myValue2
+    probe:
+      livenessProbe:
+        failureThreshold: 6
+        initialDelaySeconds: 5
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 10
+      readinessProbe:
+        failureThreshold: 6
+        initialDelaySeconds: 5
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 5
+      startupProbe:
+        failureThreshold: 30
+        periodSeconds: 20
+        successThreshold: 1
+        timeoutSeconds: 10
+    customAnnotations:
+      myKey1: myValue1
+      myKey2: myValue2
+    environmentConfig:
+      contentSecurityPolicyAdditionalFontSrc:
+        - 'https://hostname1'
+        - 'https://hostname2'
+      contentSecurityPolicyAdditionalScriptSrc:
+        - 'https://hostname1'
+        - 'https://hostname2'
+      contentSecurityPolicyAdditionalFrameSrc:
+        - 'https://hostname1'
+        - 'https://hostname2'
+      contentSecurityPolicyAdditionalConnectSrc:
+        - 'https://hostname1'
+        - 'https://hostname2'
+      contentSecurityPolicyAdditionalFrameAncestor:
+        - 'https://hostname1'
+        - 'https://hostname2'
+      authorizationEnabledForOrgInfo: true
+      contentSecurityPolicyAdditionalImgSrc:
+        - 'https://hostname1'
+        - 'https://hostname2'
+      contentSecurityPolicyAdditionalObjectSrc:
+        - 'https://hostname1'
+        - 'https://hostname2'
+      contentSecurityPolicyAdditionalDefaultSrc:
+        - 'https://hostname1'
+        - 'https://hostname2'
+    autoScaling:
+      enabled: true
+      maxReplicas: 5
+      minReplicas: 2
+      targetAverageUtilization: 80
+    replicas: 2
+    serverType: Production
+    logging:
+      maxFileSize: 50
+      consoleFormat: json
+      consoleSource: 'message,trace,accessLog,ffdc,audit'
+      maxFiles: 10
+      enableFilebeat: false
+      consoleLogLevel: INFO
+      traceFormat: ENHANCED
+      messageFormat: simple
+      traceSpecification: '*=info'
+      filebeatOutputSecret: wfps-filebeat-secret
+    customFilePVC: ''
+    deploymentProfileSize: small
+  managementState: Managed
+  admin:
+    username: deadmin
+  integration:
+    apiCatalog:
+      enable: false
+  capabilities:
+    federate:
+      enable: false
+      encryption_key_secret: ''
+    fullTextSearch:
+      adminGroups:
+        - ldapuser1
+        - ldapuser2
+      enable: true
+      esSnapshotStorage:
+        size: 10Gi
+        storageClassName: rook-cephfs
+      esStorage:
+        size: 50Gi
+        storageClassName: rook-cephfs
+      resources:
+        limits:
+          cpu: 800m
+          memory: 2Gi
+        requests:
+          cpu: 500m
+          memory: 820Mi
+  persistent:
+    data:
+      enable: false
+      size: 1Gi
+      storageClassName: rook-cephfs
+    dump:
+      enable: false
+      size: 1Gi
+      storageClassName: rook-cephfs
+    storageClassName: ocs-storagecluster-cephfs
+  authoringServer:
+    heartbeatInterval: 30
+    secretName: ''
+    url: ''
+  businessEvent:
+    enable: false
+    enableTaskApi: true
+    enableTaskRecord: true
+    subscription:
+      - appName: '*'
+        componentName: '*'
+        componentType: '*'
+        elementName: '*'
+        elementType: '*'
+        nature: '*'
+        version: '*'
+  tls:
+    serverTrustCertificateList:
+      - dummy_secret_02
+      - dummy_secret_03
+    serverTrustKeyStore: ''
+  image:
+    imagePullPolicy: Always
+    imagePullSecrets:
+      - pullSecret_01
+      - pullSecret_02
+    repository: cp.icr.io/cp/cp4a/workflow-ps/workflow-ps-server
+    tag: 22.0.2
+  database:
+    client:
+      jdbcDriverFiles: postgresql-42.2.15.jar
+      maxConnectionPoolSize: 200
+      minConnectionPoolSize: 1
+      customJDBCPVC: dummy_pvc_01
+    external:
+      port: 5432
+      enableSSL: false
+      sslMode: require
+      type: postgresql
+      databaseName: BAWDB
+      dbCredentialSecret: dummy_secret_06
+      dbServerCertSecret: dummy_secret_07
+      jdbcUrl: ''
+      serverName: dummy.postgre.com
+    managed:
+      managementState: Managed
+      replicas: 1
+      resources:
+        limits:
+          cpu: 1
+          memory: 2Gi
+        requests:
+          cpu: 1
+          memory: 2Gi
+      storage:
+        size: 16Gi
+        storageClassName: rook-cephfs
+  deploymentLicense: production
+  BusinessEvent:
+    enable: false
+    enableTaskApi: true
+    enableTaskRecord: true
+    subscription:
+      - appName: '*'
+        componentName: '*'
+        componentType: '*'
+        elementName: '*'
+        elementType: '*'
+        nature: '*'
+        version: '*'
+  appVersion: 22.0.2
+eyes
+white_check_mark
+heavy_plus_sign
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Message Ray Abaid:client-eng:
+
+
+
