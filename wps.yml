@@ -139,10 +139,10 @@ spec:
       enable: true
       esSnapshotStorage:
         size: 10Gi
-        storageClassName: rook-cephfs
+        storageClassName: ocs-storagecluster-cephfs
       esStorage:
         size: 50Gi
-        storageClassName: rook-cephfs
+        storageClassName: ocs-storagecluster-cephfs
       resources:
         limits:
           cpu: 800m
@@ -154,11 +154,11 @@ spec:
     data:
       enable: false
       size: 1Gi
-      storageClassName: rook-cephfs
+      storageClassName: ocs-storagecluster-cephfs
     dump:
       enable: false
       size: 1Gi
-      storageClassName: rook-cephfs
+      storageClassName: ocs-storagecluster-cephfs
     storageClassName: ocs-storagecluster-cephfs
   authoringServer:
     heartbeatInterval: 30
@@ -176,10 +176,10 @@ spec:
         elementType: '*'
         nature: '*'
         version: '*'
-  tls:
-    serverTrustCertificateList:
-      - dummy_secret_02
-      - dummy_secret_03
+  # tls:
+  #   serverTrustCertificateList:
+  #     - dummy_secret_02
+  #     - dummy_secret_03
     serverTrustKeyStore: ''
   image:
     imagePullPolicy: Always
@@ -200,8 +200,8 @@ spec:
       sslMode: require
       type: postgresql
       databaseName: BAWDB
-      dbCredentialSecret: dummy_secret_06
-      dbServerCertSecret: dummy_secret_07
+      # dbCredentialSecret: dummy_secret_06
+      # dbServerCertSecret: dummy_secret_07
       jdbcUrl: ''
       serverName: dummy.postgre.com
     managed:
@@ -216,7 +216,7 @@ spec:
           memory: 2Gi
       storage:
         size: 16Gi
-        storageClassName: rook-cephfs
+        storageClassName: ocs-storagecluster-cephfs
   deploymentLicense: production
   BusinessEvent:
     enable: false
@@ -231,9 +231,6 @@ spec:
         nature: '*'
         version: '*'
   appVersion: 22.0.2
-eyes
-white_check_mark
-heavy_plus_sign
 
 
 
@@ -250,7 +247,6 @@ heavy_plus_sign
 
 
 
-Message Ray Abaid:client-eng:
 
 
 
